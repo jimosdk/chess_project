@@ -57,6 +57,9 @@ class Piece
         @pos = pos
     end
 
+    def color
+        @color
+    end
 end
 
 class Bishop < Piece
@@ -110,7 +113,7 @@ class Pawn < Piece
         row,col = @pos
         x = forward_dir
         attacks = [[row + x,col + 1],[row + x,col - 1]]
-        attacks.select {|r,c| r.between?(0,7) && c.between?(0,7) && !@board[[r,c]].is_a?(NullPiece)}
+        attacks.select {|r,c| r.between?(0,7) && c.between?(0,7) && !@board[[r,c]].is_a?(NullPiece) && @board[[r,c]].color != @color}
     end
 
     def moves 
@@ -121,8 +124,15 @@ class Pawn < Piece
 
     def forward_steps
         row,col = @pos
+        steps = []
         x = forward_dir
-        at_start_row? ? [[row + x,col],[row + 2*x,col]] : [[row + x,col]]
+        step1 = row + x
+        step2 = row + 2*x
+        if step1.between?(0,7) && @board[[step1,col]].is_a?(NullPiece)
+            steps << [step1,col] 
+            steps << [step2,col] if at_start_row? && step2.between?(0,7) && @board[[step2,col]].is_a?(NullPiece)
+        end
+        steps
     end
             
 end
