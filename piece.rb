@@ -1,7 +1,155 @@
-
-
+require_relative 'slideable'
+require_relative 'board'
+require 'singleton.rb'
+require 'colorize.rb'
 class Piece
-    def initialize(pos)
+
+
+    def self.place(pos,board)
+        case pos
+        when [1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7]
+            Pawn.new('white',pos,board)
+        when [6,0],[6,1],[6,2],[6,3],[6,4],[6,5],[6,6],[6,7]
+            Pawn.new('black',pos,board)
+        when [0,1],[0,6]
+            Knight.new('white',pos,board)
+        when [7,1],[7,6]
+            Knight.new('black',pos,board)
+        when [0,2],[0,5]
+            Bishop.new('white',pos,board)
+        when [7,2],[7,5]
+            Bishop.new('black',pos,board)
+        when [0,0],[0,7]
+            Rook.new('white',pos,board)
+        when [7,0],[7,7]
+            Rook.new('black',pos,board)
+        when [0,3]
+            Queen.new('white',pos,board)
+        when [7,3]
+            Queen.new('black',pos,board)
+        when [0,4]
+            King.new('white',pos,board)
+        when [7,4]
+            King.new('black',pos,board)
+        else
+            NullPiece.instance
+        end
     end
 
+    def initialize(color,pos,board)
+        @pos = pos
+        @board = board
+        @color = color
+    end
+
+    def to_s
+        if @color == 'white'
+            color = @color.to_sym
+            symbol.colorize(:color => color)
+        elsif @color == 'black'
+            symbol.colorize(:color => :magenta)
+        else
+            symbol
+        end
+    end
+
+    def pos=(pos)
+        @pos = pos
+    end
+
+end
+
+class Bishop < Piece
+    include Slideable
+    def move_dirs
+        DIAGONAL_DIRS.dup
+    end
+
+    def symbol
+        "B"
+    end
+end
+
+class Queen < Piece
+    include Slideable
+    def move_dirs
+        HORIZONTAL_DIRS.dup + DIAGONAL_DIRS.dup
+    end
+
+    def symbol
+        "Q"
+    end
+end
+
+class Rook < Piece
+    include Slideable
+    def move_dirs
+        HORIZONTAL_DIRS.dup
+    end
+
+    def symbol
+        "R"
+    end
+end
+
+class Pawn < Piece
+    def symbol
+        "x"
+    end
+
+    def at_start_row?
+        @color == 'black' && @pos.first == 6 || 
+        @color == 'white' && @pos.first == 1
+    end
+
+    def forward_dir
+        @color == 'white' ? 1 : -1
+    end
+
+    def side_attacks
+        row,col = @pos
+        x = forward_dir
+        attacks = [[row + x,col + 1],[row + x,col - 1]]
+        attacks.select {|r,c| r.between?(0,7) && c.between?(0,7) && !@board[[r,c]].is_a?(NullPiece)}
+    end
+
+    def moves 
+        possible_moves = []
+        possible_moves += side_attacks
+        possible_moves += forward_steps
+    end
+
+    def forward_steps
+        row,col = @pos
+        x = forward_dir
+        at_start_row? ? [[row + x,col],[row + 2*x,col]] : [[row + x,col]]
+    end
+            
+end
+
+class King < Piece
+    def symbol
+        "K"
+    end
+end
+
+class Knight < Piece
+    def symbol
+        "N"
+    end
+end
+
+class NullPiece < Piece
+    include Singleton
+    def self.instance
+        @@instance ||=new
+    end
+
+    def initialize
+        @color = nil
+    end
+
+    def symbol
+        " "
+    end
 end
