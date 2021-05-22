@@ -1,4 +1,5 @@
 require_relative 'slideable'
+require_relative 'stepable'
 require_relative 'board'
 require 'singleton.rb'
 require 'colorize.rb'
@@ -138,14 +139,29 @@ class Pawn < Piece
 end
 
 class King < Piece
+    include Stepable
     def symbol
         "K"
+    end
+
+    def move_diffs
+        [[1,-1],[1,0],[1,1],
+         [0,-1],       [0,1],
+         [-1,-1],[-1,0],[-1,1]]
     end
 end
 
 class Knight < Piece
+    include Stepable
     def symbol
         "N"
+    end
+
+    def move_diffs
+        [[2,-1],[2,1],
+         [1,-2],[1,2],
+         [-1,-2],[-1,2],
+         [-2,-1],[-2,1]]
     end
 end
 
