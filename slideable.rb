@@ -24,6 +24,7 @@ module Slideable
             row += dx
             col += dy
         end
+        moves << [row,col] if row.between?(0,7) && col.between?(0,7) && !@board[[row,col]].is_a?(NullPiece) && @board[[row,col]].color != @color
         moves
     end
 end
