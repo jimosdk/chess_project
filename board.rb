@@ -49,17 +49,21 @@ class Board
 #USED FOR DEBUGGING!
     def render
         system('clear')
-        puts "  a b c d e f g h ".colorize(:color => :light_green)
-        puts " -----------------"
+        puts "   a  b  c  d  e  f  g  h ".colorize(:color => :light_black)
         @grid.reverse.each_with_index do |row,idx|
-            print "#{8 - idx}".colorize(:color => :light_cyan)
-            print "|"
-            print row.map(&:to_s).join('|')
-            print "|"
-            print "#{8 - idx}".colorize(:color => :light_cyan)
-            puts "\n -----------------\n"
+            print "#{8 - idx} ".colorize(:color => :light_black)
+            print_row = row.map.with_index do |ele,idx_2|
+                print_ele = ' ' + ele.to_s + ' '
+                if (idx % 2 == 0 || idx == 0) && (idx_2 % 2 == 0 || idx_2 == 0) || idx % 2 != 0 && idx_2 % 2 != 0
+                    print_ele.colorize( :background => :light_black)  
+                else
+                    print_ele.colorize(:background => :black) 
+                end
+            end.join('')
+            print print_row
+            puts " #{8 - idx}".colorize(:color => :light_black)                                   
         end
-        puts "  a b c d e f g h ".colorize(:color => :light_green)
+        puts "   a  b  c  d  e  f  g  h ".colorize(:color => :light_black)
         nil
     end
 end

@@ -11,6 +11,8 @@ module Slideable
         moves = possible_moves.map {|dx,dy| grow_unblocked_moves_in_dir(dx,dy)}.flatten(1)
     end
 
+    private
+    
     def move_dirs
     end
 
@@ -19,12 +21,12 @@ module Slideable
         row += dx
         col += dy
         moves = []
-        while  row.between?(0,7) && col.between?(0,7) && @board[[row,col]].is_a?(NullPiece)
+        while  row.between?(0,7) && col.between?(0,7) && @board[[row,col]].empty?
             moves << [row,col]
             row += dx
             col += dy
         end
-        moves << [row,col] if row.between?(0,7) && col.between?(0,7) && !@board[[row,col]].is_a?(NullPiece) && @board[[row,col]].color != @color
+        moves << [row,col] if row.between?(0,7) && col.between?(0,7) && !@board[[row,col]].empty? && @board[[row,col]].color != @color
         moves
     end
 end
