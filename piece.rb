@@ -4,7 +4,8 @@ require_relative 'board'
 require 'singleton.rb'
 require 'colorize.rb'
 class Piece
-
+    attr_reader :board,:color
+    attr_accessor :pos
 
     def self.place(pos,board)
         case pos
@@ -57,10 +58,6 @@ class Piece
         @pos = pos
     end
 
-    def color
-        @color
-    end
-
     def empty?
         self.is_a?(NullPiece)
     end
@@ -71,7 +68,7 @@ class Bishop < Piece
     
 
     def symbol
-        "B"
+        '♝'#"B"
     end
 
     private
@@ -86,7 +83,7 @@ class Queen < Piece
     
 
     def symbol
-        "Q"
+        '♛'#"Q"
     end
 
     private
@@ -101,7 +98,7 @@ class Rook < Piece
     
 
     def symbol
-        "R"
+        '♜'#"R"
     end
 
     private
@@ -113,7 +110,7 @@ end
 
 class Pawn < Piece
     def symbol
-        "x"
+        '♟'#"x"
     end
 
     def moves 
@@ -158,7 +155,7 @@ end
 class King < Piece
     include Stepable
     def symbol
-        "K"
+        '♚'#"K"
     end
 
     protected
@@ -173,7 +170,7 @@ end
 class Knight < Piece
     include Stepable
     def symbol
-        "N"
+        '♞'#"N"
     end
 
     protected 
