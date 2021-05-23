@@ -21,6 +21,16 @@ class Board
         @grid[x][y] = piece
     end
 
+    def valid_pos?(pos)
+        row,col = pos
+        row.between?(0,7) && col.between?(0,7)
+    end
+
+    def empty?(pos)
+        x,y = pos
+        @grid[x][y].empty?
+    end
+
     def move_piece(start_pos,end_pos)
         row1,col1 = start_pos
         raise StandardError.new("There is no piece at #{row1},#{col1}") if @grid[row1][col1].nil? || @grid[row1][col1].is_a?(NullPiece)
@@ -47,23 +57,5 @@ class Board
 
 
 #USED FOR DEBUGGING!
-    def render
-        system('clear')
-        puts "   a  b  c  d  e  f  g  h ".colorize(:color => :light_black)
-        @grid.reverse.each_with_index do |row,idx|
-            print "#{8 - idx} ".colorize(:color => :light_black)
-            print_row = row.map.with_index do |ele,idx_2|
-                print_ele = ' ' + ele.to_s + ' '
-                if (idx % 2 == 0 || idx == 0) && (idx_2 % 2 == 0 || idx_2 == 0) || idx % 2 != 0 && idx_2 % 2 != 0
-                    print_ele.colorize( :background => :light_black)  
-                else
-                    print_ele.colorize(:background => :black) 
-                end
-            end.join('')
-            print print_row
-            puts " #{8 - idx}".colorize(:color => :light_black)                                   
-        end
-        puts "   a  b  c  d  e  f  g  h ".colorize(:color => :light_black)
-        nil
-    end
+    
 end
