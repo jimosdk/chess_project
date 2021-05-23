@@ -27,15 +27,21 @@ class Display
             tile_color = idx % 2 == 0 ? :black: :light_black
             number = " #{idx + 1} ".colorize(:color => :light_black)
             print_row << number
-            @board.grid[idx].each.with_index do |ele,idx_2| 
-                tile_color = tile_color == :black ? :blue : :light_blue if [idx,idx_2] == @cursor.cursor_pos
+            @board.grid[idx].each.with_index do |ele,idx_2|
+                if  [idx,idx_2] == @cursor.cursor_pos && [idx,idx_2] == @cursor.selected
+                    tile_color = tile_color == :black ? :cyan : :light_cyan 
+                elsif [idx,idx_2] == @cursor.selected
+                    tile_color = tile_color == :black ? :red : :light_red 
+                elsif [idx,idx_2] == @cursor.cursor_pos
+                    tile_color = tile_color == :black ? :blue : :light_blue
+                end
                 if @board.empty?([idx,idx_2])
                     print_ele = EMPTY_TILE_COLORS[tile_color] #attempt at reducing calls to colorize and to to_s
                 else
                     print_ele = (' ' + ele.to_s + ' ').colorize( :background => tile_color)
                 end
                 print_row <<  print_ele
-                tile_color = tile_color == :black || tile_color == :blue ? :light_black : :black
+                tile_color = tile_color == :black || tile_color == :blue || tile_color == :red || tile_color == :cyan ? :light_black : :black
             end
             print_row << number
             print_board << print_row.join('')                                 
@@ -46,7 +52,7 @@ class Display
         nil
     end
 
-    
+
     #temporary method for debugging
     def move_cursor_bae
         loop do
