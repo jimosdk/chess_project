@@ -44,18 +44,26 @@ class Board
     end
 
    
+    def in_check?(color)  
+        king_pos = find_king(color)
+        color = color == :white ? :black : :white
+        valid_moves(color).include?(king_pos)
+    end
+    def find_king(color)
+        king = nil
+        @grid.any? {|row| king = row.find{|piece| piece.is_a?(King) && piece.color == color}}
+        king.pos
+    end
 
+    def valid_moves(color)
+        debugger
+        @grid.inject([]) do |acc,row|
+            acc += row.inject([]) do |acc_2,tile|
+                tile.empty? || tile.color != color ? acc_2 : acc_2 += tile.moves
+            end
+        end
+    end
 
-
-
-
-
-
-
-
-
-
-
-#USED FOR DEBUGGING!
-    
+    def checkmate?
+    end
 end

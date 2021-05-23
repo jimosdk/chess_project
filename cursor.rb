@@ -98,8 +98,9 @@ class Cursor
   end
 
   def toggle_selected(pos)
-    return nil if selected.nil? && @board.empty?(pos)
+    return nil if @selected.nil? && @board.empty?(pos)
     @selected = @selected.nil? ? pos : nil 
     @cursor_pos
   end
+
 end
