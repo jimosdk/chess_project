@@ -56,7 +56,7 @@ class Display
     #temporary method for debugging
     def move_cursor_bae
         move = []
-        loop do
+        until @board.checkmate?(:white) || @board.checkmate?(:black)
             render
             input = @cursor.get_input
             move << input unless input.nil?

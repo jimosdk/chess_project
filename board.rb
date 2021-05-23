@@ -38,6 +38,7 @@ class Board
         moves = piece.moves
         row2,col2 = end_pos
         raise StandardError.new("Illegal move , #{piece.class.to_s} can't move to #{row2},#{col2}" ) unless moves.include?(end_pos)
+        raise StandardError.new("Illegal move , #{piece.class.to_s} to #{row2},#{col2} moves in check") if test_check(start_pos,end_pos)
         @grid[row2][col2] = NullPiece.instance unless @grid[row2][col2].is_a?(NullPiece)
         @grid[row2][col2],@grid[row1][col1] = @grid[row1][col1],@grid[row2][col2]
         piece.pos = [row2,col2]
@@ -56,7 +57,6 @@ class Board
     end
 
     def valid_moves(color)
-        debugger
         @grid.inject([]) do |acc,row|
             acc += row.inject([]) do |acc_2,tile|
                 tile.empty? || tile.color != color ? acc_2 : acc_2 += tile.moves
@@ -64,6 +64,32 @@ class Board
         end
     end
 
-    def checkmate?
+    def test_check(start_pos,end_pos)
+        row1,col1 = start_pos
+        row2,col2 = end_pos
+        piece = self[start_pos]
+        saved_piece = NullPiece.instance
+        unless @grid[row2][col2].is_a?(NullPiece)
+            saved_piece = @grid[row2][col2]
+            @grid[row2][col2] = NullPiece.instance 
+        end
+        @grid[row2][col2],@grid[row1][col1] = @grid[row1][col1],@grid[row2][col2]
+        piece.pos = [row2,col2]
+        check = in_check?(self[end_pos].color)
+        @grid[row1][col1],@grid[row2][col2] = @grid[row2][col2],saved_piece
+        piece.pos = [row1,col1]
+        check
+    end
+
+    def checkmate?(color)
+        in_check?(color) && 
+        @grid.none? do |row|
+            row.any? do |tile|
+                !tile.empty? && tile.color == color && 
+                tile.moves.any? do |move|
+                    !test_check(tile.pos,move)
+                end
+            end
+        end
     end
 end
