@@ -83,8 +83,7 @@ class Cursor
     when :up,:down,:right,:left
         update_pos(MOVES[key])
     when :return,:space
-        toggle_selected(@cursor_pos)
-        return @cursor_pos
+        return toggle_selected(@cursor_pos)
     when :ctrl_c
         Process.exit(0)
     end
@@ -99,7 +98,8 @@ class Cursor
   end
 
   def toggle_selected(pos)
-    return if selected.nil? && @board.empty?(pos)
+    return nil if selected.nil? && @board.empty?(pos)
     @selected = @selected.nil? ? pos : nil 
+    @cursor_pos
   end
 end
