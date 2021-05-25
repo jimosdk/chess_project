@@ -42,9 +42,9 @@ class Cursor
     @selected = nil
   end
 
-  def get_input
+  def get_input(color)
     key = KEYMAP[read_char]
-    handle_key(key)
+    handle_key(key,color)
   end
 
   private
@@ -78,12 +78,12 @@ class Cursor
     return input
   end
 
-  def handle_key(key)
+  def handle_key(key,color)
     case key
     when :up,:down,:right,:left
         update_pos(MOVES[key])
     when :return,:space
-        return toggle_selected(@cursor_pos)
+        return toggle_selected(@cursor_pos,color)
     when :ctrl_c
         Process.exit(0)
     end
@@ -97,8 +97,12 @@ class Cursor
     @cursor_pos = new_pos if @board.valid_pos?(new_pos)
   end
 
-  def toggle_selected(pos)
+  def toggle_selected(pos,color)
     return nil if @selected.nil? && @board.empty?(pos)
+    if @selected.nil? && @board[pos].color != color
+      puts "It's #{color} player's turn"              #reminder : make standard error
+      return nil 
+    end
     @selected = @selected.nil? ? pos : nil 
     @cursor_pos
   end
