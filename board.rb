@@ -4,6 +4,26 @@ require 'colorize.rb'
 
 class Board
     attr_accessor :grid
+
+    def self.dup(board)
+        board_dup = board.dup
+        board_dup.grid = board.grid.dup
+        board_dup.grid.map! do |row|
+            row_dup = row.dup
+            row_dup.map! do |piece|
+                unless piece.is_a?(NullPiece)
+                    piece_dup = piece.dup
+                    piece_dup.pos = piece.pos.dup
+                    piece_dup.board = board_dup
+                else
+                    piece_dup = piece
+                end
+                piece_dup
+            end
+            row_dup
+        end
+        board_dup
+    end
     def initialize 
         @grid = Array.new(8) {Array.new(8)}
         (0..7).each do |idx|

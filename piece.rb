@@ -4,8 +4,8 @@ require_relative 'board'
 require 'singleton.rb'
 require 'colorize.rb'
 class Piece
-    attr_reader :board,:color
-    attr_accessor :pos
+    attr_reader :color
+    attr_accessor :pos,:board
 
     def self.place(pos,board)
         case pos
