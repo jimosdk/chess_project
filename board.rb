@@ -1,5 +1,5 @@
-require_relative 'piece.rb'
-require 'byebug.rb'
+Dir["./pieces/*.rb"].each {|file| require file}
+Dir["./players/*.rb"].each{|file| require file}
 require 'colorize.rb'
 
 class Board

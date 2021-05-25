@@ -1,5 +1,5 @@
 require_relative 'display.rb'
-require_relative 'player.rb'
+require_relative 'players/player.rb'
 
 class Game
     attr_accessor :board,:display,:players,:current_player

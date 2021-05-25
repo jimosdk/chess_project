@@ -1,13 +1,4 @@
-require_relative 'display.rb'
-
-class Player
-    attr_reader :color 
-    def initialize(color , display)
-        @color = color
-        @display = display
-    end
-
-end
+require_relative 'player.rb'
 
 class HumanPlayer < Player
 
@@ -32,10 +23,3 @@ class HumanPlayer < Player
         end
     end
 end
-
-class ComputerPlayer < Player
-    def make_move(board)
-    end
-end
-
-
