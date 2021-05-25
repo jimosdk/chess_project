@@ -46,36 +46,10 @@ class Display
             print_row << number
             print_board << print_row.join('')                                 
         end 
-        #system('clear')
+        system('clear')
         print_board << letters
         puts print_board 
         nil
     end
-
-
-    #temporary method for debugging
-    def move_cursor_bae
-        move = []
-        until @board.checkmate?(:white) || @board.checkmate?(:black)
-            render
-            input = @cursor.get_input
-            move << input unless input.nil?
-    
-            if move.length == 2
-                begin
-                    @board.move_piece(move.first,move.last)
-                rescue => e  
-                puts e.message
-                sleep(1.5)
-                ensure
-                    move = []
-                end
-            end  
-        end
-        #render until @cursor.get_input == :exit
-        render 
-    end
-
-
-    
+ 
 end
