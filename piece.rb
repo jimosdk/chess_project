@@ -61,6 +61,18 @@ class Piece
     def empty?
         self.is_a?(NullPiece)
     end
+
+
+
+    def valid_moves
+        moves.reject {|move| moves_into_check?(move)}
+    end
+
+    def moves_into_check?(end_pos)
+        board_dup = @board.dup
+        board_dup.move_piece!(@pos,end_pos)
+        board_dup.in_check?(@color)
+    end
 end
 
 class Bishop < Piece

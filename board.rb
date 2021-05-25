@@ -59,20 +59,6 @@ class Board
         @grid[x][y].empty?
     end
 
-    def move_piece(start_pos,end_pos)
-        row1,col1 = start_pos
-        raise StandardError.new("There is no piece at #{row1},#{col1}") if !valid_pos?(start_pos) || self[start_pos].empty? #@grid[row1][col1].nil? || @grid[row1][col1].is_a?(NullPiece)
-        piece = @grid[row1][col1]
-        moves = piece.moves
-        row2,col2 = end_pos
-        raise StandardError.new("Illegal move , #{piece.class.to_s} can't move to #{row2},#{col2}" ) unless moves.include?(end_pos)
-        raise StandardError.new("Illegal move , #{piece.class.to_s} to #{row2},#{col2} moves in check") if test_check(start_pos,end_pos)
-        @grid[row2][col2] = NullPiece.instance unless @grid[row2][col2].is_a?(NullPiece)
-        @grid[row2][col2],@grid[row1][col1] = @grid[row1][col1],@grid[row2][col2]
-        piece.pos = [row2,col2]
-    end
-
-   
     def in_check?(color)  
         king_pos = find_king(color)
         color = color == :white ? :black : :white
@@ -92,32 +78,82 @@ class Board
         end
     end
 
-    def test_check(start_pos,end_pos)
+
+    #checking if a piece moves in check and for checkmate by dupping board
+    #making move on dupped board and calling in_check?
+
+    def move_piece(start_pos,end_pos)
         row1,col1 = start_pos
+        raise StandardError.new("There is no piece at #{row1},#{col1}") if !valid_pos?(start_pos) || self[start_pos].empty? #@grid[row1][col1].nil? || @grid[row1][col1].is_a?(NullPiece)
+        piece = @grid[row1][col1]
+        moves = piece.valid_moves
         row2,col2 = end_pos
-        piece = self[start_pos]
-        saved_piece = NullPiece.instance
-        unless @grid[row2][col2].is_a?(NullPiece)
-            saved_piece = @grid[row2][col2]
-            @grid[row2][col2] = NullPiece.instance 
-        end
+        raise StandardError.new("Illegal move , #{piece.class.to_s} can't move to #{row2},#{col2}" ) unless moves.include?(end_pos)
+        @grid[row2][col2] = NullPiece.instance unless @grid[row2][col2].is_a?(NullPiece)
         @grid[row2][col2],@grid[row1][col1] = @grid[row1][col1],@grid[row2][col2]
         piece.pos = [row2,col2]
-        check = in_check?(self[end_pos].color)
-        @grid[row1][col1],@grid[row2][col2] = @grid[row2][col2],saved_piece
-        piece.pos = [row1,col1]
-        check
+    end
+
+    def move_piece!(start_pos,end_pos)
+        piece = self[start_pos]
+        self[end_pos] = NullPiece.instance unless self[end_pos].is_a?(NullPiece)
+        self[end_pos],self[start_pos] = self[start_pos],self[end_pos]
+        piece.pos = end_pos
     end
 
     def checkmate?(color)
-        in_check?(color) && 
-        @grid.none? do |row|
-            row.any? do |tile|
-                !tile.empty? && tile.color == color && 
-                tile.moves.any? do |move|
-                    !test_check(tile.pos,move)
-                end
+        in_check?(color) && @grid.none? do |row|
+            row.any? do |piece|
+                !piece.empty? && piece.color == color &&
+                piece.valid_moves != []
             end
         end
     end
+
+
+    #ALTERNATIVE SOLUTION TO THE ONE ABOVE
+    #checking for move into check and checkmate by making move on actual board
+    #calling in_check? and reverting move
+
+    # def move_piece(start_pos,end_pos)
+    #     row1,col1 = start_pos
+    #     raise StandardError.new("There is no piece at #{row1},#{col1}") if !valid_pos?(start_pos) || self[start_pos].empty? #@grid[row1][col1].nil? || @grid[row1][col1].is_a?(NullPiece)
+    #     piece = @grid[row1][col1]
+    #     moves = piece.moves
+    #     row2,col2 = end_pos
+    #     raise StandardError.new("Illegal move , #{piece.class.to_s} can't move to #{row2},#{col2}" ) unless moves.include?(end_pos)
+    #     raise StandardError.new("Illegal move , #{piece.class.to_s} to #{row2},#{col2} moves in check") if test_check(start_pos,end_pos)
+    #     @grid[row2][col2] = NullPiece.instance unless @grid[row2][col2].is_a?(NullPiece)
+    #     @grid[row2][col2],@grid[row1][col1] = @grid[row1][col1],@grid[row2][col2]
+    #     piece.pos = [row2,col2]
+    # end
+
+    # def test_check(start_pos,end_pos)
+    #     row1,col1 = start_pos
+    #     row2,col2 = end_pos
+    #     piece = self[start_pos]
+    #     saved_piece = NullPiece.instance
+    #     unless @grid[row2][col2].is_a?(NullPiece)
+    #         saved_piece = @grid[row2][col2]
+    #         @grid[row2][col2] = NullPiece.instance 
+    #     end
+    #     @grid[row2][col2],@grid[row1][col1] = @grid[row1][col1],@grid[row2][col2]
+    #     piece.pos = [row2,col2]
+    #     check = in_check?(self[end_pos].color)
+    #     @grid[row1][col1],@grid[row2][col2] = @grid[row2][col2],saved_piece
+    #     piece.pos = [row1,col1]
+    #     check
+    # end
+
+    # def checkmate?(color)
+    #     in_check?(color) && 
+    #     @grid.none? do |row|
+    #         row.any? do |tile|
+    #             !tile.empty? && tile.color == color && 
+    #             tile.moves.any? do |move|
+    #                 !test_check(tile.pos,move)
+    #             end
+    #         end
+    #     end
+    # end
 end
