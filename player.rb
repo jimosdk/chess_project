@@ -15,6 +15,7 @@ class HumanPlayer < Player
         move = []
         loop do
             @display.render
+            puts "#{@color}'s turn"
             input = @display.cursor.get_input(@color)
             move << input unless input.nil?
             if move.length == 2

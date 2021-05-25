@@ -110,6 +110,15 @@ class Board
         end
     end
 
+    def draw?(color)
+        !in_check?(color) && @grid.none? do |row|
+            row.any? do |piece|
+                !piece.empty? && piece.color == color &&
+                piece.valid_moves != []
+            end
+        end
+    end
+
 
     #ALTERNATIVE SOLUTION TO THE ONE ABOVE
     #checking for move into check and checkmate by making move on actual board
