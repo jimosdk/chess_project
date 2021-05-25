@@ -7,7 +7,7 @@ class Piece
     attr_reader :color
     attr_accessor :pos,:board
 
-    def self.place(pos,board)
+    def self.initial_position(pos,board)
         case pos
         when [1,0],[1,1],[1,2],[1,3],[1,4],[1,5],[1,6],[1,7]
             Pawn.new(:white,pos,board)

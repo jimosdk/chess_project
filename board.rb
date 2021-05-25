@@ -5,9 +5,33 @@ require 'colorize.rb'
 class Board
     attr_accessor :grid
 
-    def self.dup(board)
-        board_dup = board.dup
-        board_dup.grid = board.grid.dup
+    def self.set_board 
+        board = Board.new 
+
+        (0..7).each do |idx|
+            board.grid[idx].map!.with_index {|ele,idx_2| Piece.initial_position([idx,idx_2],board)}
+        end
+
+        board
+    end
+
+    def initialize
+        @grid = Array.new(8) {Array.new(8,NullPiece.instance)}
+    end
+
+     def [](pos)
+        x,y = pos
+        @grid[x][y]
+    end
+
+    def []=(pos,piece)
+        x,y = pos
+        @grid[x][y] = piece
+    end
+
+    def dup
+        board_dup = Board.new
+        board_dup.grid = self.grid.dup
         board_dup.grid.map! do |row|
             row_dup = row.dup
             row_dup.map! do |piece|
@@ -24,22 +48,6 @@ class Board
         end
         board_dup
     end
-    def initialize 
-        @grid = Array.new(8) {Array.new(8)}
-        (0..7).each do |idx|
-            @grid[idx].map!.with_index {|ele,idx_2| Piece.place([idx,idx_2],self)}
-        end
-    end
-
-     def [](pos)
-        x,y = pos
-        @grid[x][y]
-    end
-
-    def []=(pos,piece)
-        x,y = pos
-        @grid[x][y] = piece
-    end
 
     def valid_pos?(pos)
         row,col = pos
@@ -53,7 +61,7 @@ class Board
 
     def move_piece(start_pos,end_pos)
         row1,col1 = start_pos
-        raise StandardError.new("There is no piece at #{row1},#{col1}") if @grid[row1][col1].nil? || @grid[row1][col1].is_a?(NullPiece)
+        raise StandardError.new("There is no piece at #{row1},#{col1}") if !valid_pos?(start_pos) || self[start_pos].empty? #@grid[row1][col1].nil? || @grid[row1][col1].is_a?(NullPiece)
         piece = @grid[row1][col1]
         moves = piece.moves
         row2,col2 = end_pos
@@ -68,7 +76,7 @@ class Board
     def in_check?(color)  
         king_pos = find_king(color)
         color = color == :white ? :black : :white
-        valid_moves(color).include?(king_pos)
+        all_moves_for(color).include?(king_pos)
     end
     def find_king(color)
         king = nil
@@ -76,7 +84,7 @@ class Board
         king.pos
     end
 
-    def valid_moves(color)
+    def all_moves_for(color)
         @grid.inject([]) do |acc,row|
             acc += row.inject([]) do |acc_2,tile|
                 tile.empty? || tile.color != color ? acc_2 : acc_2 += tile.moves

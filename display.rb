@@ -12,7 +12,7 @@ class Display
     EMPTY_TILE_COLORS = {:blue => BLUE,:black => BLACK,:light_black => LIGHT_BLACK, :light_blue => LIGHT_BLUE}
 
     attr_reader :cursor,:board
-    def initialize(board = Board.new)
+    def initialize(board = Board.set_board)
         @board = board
         @cursor = Cursor.new([0,0],@board)
     end
@@ -46,7 +46,7 @@ class Display
             print_row << number
             print_board << print_row.join('')                                 
         end 
-        system('clear')
+        #system('clear')
         print_board << letters
         puts print_board 
         nil
