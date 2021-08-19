@@ -1,6 +1,5 @@
 require_relative 'board.rb'
 require_relative 'cursor.rb'
-require 'byebug'
 
 
 class Display 

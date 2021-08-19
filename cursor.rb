@@ -1,5 +1,4 @@
 require_relative 'board.rb'
-require 'byebug'
 require "io/console"
 
 KEYMAP = {
